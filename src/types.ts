@@ -213,6 +213,10 @@ export interface ProviderMeta {
   promptCacheRouting?: PromptCacheRoutingMode;
   // Codex OAuth FAST mode: injects service_tier="priority" on ChatGPT Codex requests
   codexFastMode?: boolean;
+  // Chat Completions 上游的 content 格式
+  // - "array": 请求时将 messages[].content 从 string 转为 [{"type":"text","text":"..."}]
+  // - undefined: 标准 OpenAI 字符串格式（默认）
+  contentFormat?: "array";
   // Codex Responses -> Chat Completions reasoning capability metadata
   codexChatReasoning?: CodexChatReasoning;
   // Codex → Anthropic path: emulate the Claude Code client (disabled by default; only an explicit true enables it)
