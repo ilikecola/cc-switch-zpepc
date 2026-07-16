@@ -733,7 +733,7 @@ export function CodexFormFields({
                     <p className="text-xs leading-relaxed text-muted-foreground">
                       {t("codexConfig.contentFormatArrayHint", {
                         defaultValue:
-                          "上游 Chat Completions 接口的 messages[].content 要求数组格式时开启，自动将字符串转为 [{\"type\":\"text\",\"text\":\"...\"}]。",
+                          '上游 Chat Completions 接口的 messages[].content 要求数组格式时开启，自动将字符串转为 [{"type":"text","text":"..."}]。',
                       })}
                     </p>
                   </div>
@@ -747,7 +747,7 @@ export function CodexFormFields({
                 </div>
               </div>
             )}
-            
+
             {isChatFormat && canEditReasoning && (
               <div
                 className={cn(
