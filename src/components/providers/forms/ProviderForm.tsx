@@ -598,7 +598,10 @@ function ProviderFormFull({
   // Emulate the Claude Code client: off by default, enabled only when the user explicitly turns it on (true)
   const [localCodexImpersonateClaudeCode, setLocalCodexImpersonateClaudeCode] =
     useState<boolean>(initialData?.meta?.impersonateClaudeCode === true);
-
+  
+  const [localContentFormatArray, setLocalContentFormatArray] =
+    useState<boolean>(initialData?.meta?.contentFormat === "array");
+  
   // Codex → Anthropic output ceiling override (empty string = use the 8192 default).
   // Kept as a string so the numeric input can be cleared; parsed on save.
   const [localCodexMaxOutputTokens, setLocalCodexMaxOutputTokens] =
@@ -1551,6 +1554,12 @@ function ProviderFormFull({
         supportsFullUrl && category !== "official" && localIsFullUrl
           ? true
           : undefined,
+      contentFormat:
+          appId === "codex" &&
+          category !== "official" &&
+          localContentFormatArray
+          ? "array"
+          : undefined,
     };
 
     if (!isCodexOauthProvider && "codexFastMode" in nextMeta) {
@@ -2194,6 +2203,8 @@ function ProviderFormFull({
               onAnthropicAuthFieldChange={setLocalCodexAnthropicAuthField}
               impersonateClaudeCode={localCodexImpersonateClaudeCode}
               onImpersonateClaudeCodeChange={setLocalCodexImpersonateClaudeCode}
+              contentFormatArray={localContentFormatArray}
+              onContentFormatArrayChange={setLocalContentFormatArray}
               maxOutputTokens={localCodexMaxOutputTokens}
               onMaxOutputTokensChange={setLocalCodexMaxOutputTokens}
               codexChatReasoning={codexChatReasoning}
