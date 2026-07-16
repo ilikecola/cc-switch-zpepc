@@ -1545,6 +1545,15 @@ impl RequestForwarder {
             &filtered_body,
             self.session_client_provided,
         );
+        // content_format 转换：string → array（仅标记了 contentFormat="array" 的 provider）
+        let needs_content_array = provider
+            .meta
+            .as_ref()
+            .map(|m| m.needs_content_array_format())
+            .unwrap_or(false);
+        if needs_content_array {
+            convert_content_string_to_array(&mut filtered_body);
+        }
         let request_is_streaming =
             is_streaming_request(&effective_endpoint, &filtered_body, headers);
         let force_identity_encoding = needs_transform
@@ -3350,6 +3359,20 @@ fn is_protected_local_proxy_override_header(name: &http::HeaderName) -> bool {
 
 fn prepare_upstream_request_body(request_body: Value) -> Value {
     canonicalize_value(filter_private_params_with_whitelist(request_body, &[]))
+}
+
+/// 将 messages[].content 从 string 转为 [{"type":"text","text":"..."}]。
+/// 已是数组或 null 的 content 保持原样（multimodal 不受影响）。
+/// 对 system / user / assistant / tool 所有角色均生效。
+fn convert_content_string_to_array(body: &mut Value) {
+    let Some(messages) = body.get_mut("messages").and_then(|m| m.as_array_mut()) else {
+        return;
+    };
+    for message in messages.iter_mut() {
+        if let Some(text) = message.get("content").and_then(Value::as_str) {
+            message["content"] = json!([{"type": "text", "text": text}]);
+        }
+    }
 }
 
 fn log_prompt_cache_trace(
