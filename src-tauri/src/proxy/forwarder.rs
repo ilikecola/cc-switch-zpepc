@@ -3370,7 +3370,7 @@ fn convert_content_string_to_array(body: &mut Value) {
     };
     for message in messages.iter_mut() {
         if let Some(text) = message.get("content").and_then(Value::as_str) {
-            message["content"] = json!([{"type": "text", "text": text}]);
+            message["content"] = serde_json::json!([{"type": "text", "text": text}]);
         }
     }
 }
