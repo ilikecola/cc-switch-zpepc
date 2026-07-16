@@ -464,6 +464,11 @@ pub struct ProviderMeta {
     /// Codex OAuth FAST mode: inject `service_tier = "priority"` for ChatGPT Codex requests.
     #[serde(rename = "codexFastMode", skip_serializing_if = "Option::is_none")]
     pub codex_fast_mode: Option<bool>,
+    /// Zpepc Chat Completions 上游的 content 格式。
+    /// - "array": 将请求 messages[].content 从 string 转为 [{"type":"text","text":"..."}]
+    /// - None: 标准 OpenAI 字符串格式（默认，不转换）
+    #[serde(rename = "contentFormat", skip_serializing_if = "Option::is_none")]
+    pub content_format: Option<String>,
     /// Codex Responses -> Chat Completions reasoning capability metadata.
     #[serde(rename = "codexChatReasoning", skip_serializing_if = "Option::is_none")]
     pub codex_chat_reasoning: Option<CodexChatReasoningConfig>,
@@ -535,6 +540,11 @@ pub fn parse_custom_user_agent(
 }
 
 impl ProviderMeta {
+    /// 是否需要对 Chat Completions 上游做 content string→array 转换
+    pub fn needs_content_array_format(&self) -> bool {
+        self.content_format.as_deref() == Some("array")
+    }
+
     /// Codex OAuth FAST mode 是否启用。默认关闭，因为 `service_tier="priority"`
     /// 会按更高速率消耗 ChatGPT 订阅配额，用户需显式开启以换取更低延迟。
     pub fn codex_fast_mode_enabled(&self) -> bool {
