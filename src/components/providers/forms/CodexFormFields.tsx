@@ -85,6 +85,9 @@ interface CodexFormFieldsProps {
   // Anthropic path: whether to emulate the Claude Code client
   impersonateClaudeCode: boolean;
   onImpersonateClaudeCodeChange: (value: boolean) => void;
+  // Content format: string → array 转换（兼容非标准上游）
+  contentFormatArray: boolean;
+  onContentFormatArrayChange: (value: boolean) => void;
   // Anthropic path: output ceiling override (empty string = use default). Digits only.
   maxOutputTokens: string;
   onMaxOutputTokensChange: (value: string) => void;
@@ -181,6 +184,8 @@ export function CodexFormFields({
   onAnthropicAuthFieldChange,
   impersonateClaudeCode,
   onImpersonateClaudeCodeChange,
+  contentFormatArray,
+  onContentFormatArrayChange,
   maxOutputTokens,
   onMaxOutputTokensChange,
   codexChatReasoning = {},
@@ -715,6 +720,34 @@ export function CodexFormFields({
               </div>
             )}
 
+            {/* Content Format: string → array 转换 */}
+            {isChatFormat && (
+              <div className="space-y-3 border-t border-border-default pt-3">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <FormLabel>
+                      {t("codexConfig.contentFormatArrayLabel", {
+                        defaultValue: "Array Content 格式",
+                      })}
+                    </FormLabel>
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      {t("codexConfig.contentFormatArrayHint", {
+                        defaultValue:
+                          "上游 Chat Completions 接口的 messages[].content 要求数组格式时开启，自动将字符串转为 [{\"type\":\"text\",\"text\":\"...\"}]。",
+                      })}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={contentFormatArray}
+                    onCheckedChange={onContentFormatArrayChange}
+                    aria-label={t("codexConfig.contentFormatArrayLabel", {
+                      defaultValue: "Array Content 格式",
+                    })}
+                  />
+                </div>
+              </div>
+            )}
+            
             {isChatFormat && canEditReasoning && (
               <div
                 className={cn(
