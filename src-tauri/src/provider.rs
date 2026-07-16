@@ -2,6 +2,7 @@ use http::header::{HeaderValue, InvalidHeaderValue};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use serde_json::json;
 use std::collections::HashMap;
 
 // SSOT 模式：不再写供应商副本文件
